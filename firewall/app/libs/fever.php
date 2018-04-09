@@ -789,6 +789,10 @@ class Fever
 		{
 			$dir = 'mobile';
 		}
+		if ($this->is_ipad)
+		{
+			$dir = 'ipad';
+		}		
 		$file = FIREWALL_ROOT.'app/views/'.$dir.'/'.$base_file_name.'.php';
 		if (!file_exists($file))
 		{
