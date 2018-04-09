@@ -15,6 +15,7 @@
 <link type="application/rss+xml" rel="alternate" title="Saved Items" href="./?rss=saved" />
 <?php endif;?>
 <link rel="stylesheet" type="text/css" href="firewall/app/views/default/styles/page.css?v=<?php e($this->version);?>" />
+<?php e($this->override_link());?>
 <script type="text/javascript" src="firewall/app/views/default/scripts/fever.js?v=<?php e($this->version);?>"></script>
 </head>
 <body>

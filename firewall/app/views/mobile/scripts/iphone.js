@@ -816,10 +816,14 @@ Fever.iPhone =
 			this.loadPreviousItem();
 		};
 	},
+	detectPortrait : function() {
+		var inner_width = Math.round(window.innerWidth)
+		var is_portrait = (inner_width == 320 || inner_width == 375 || inner_width == 414);
+		document.body.className = is_portrait ? 'portrait' : 'landscape';
+	},
 	onOrientationChange : function()
 	{
-		var is_portrait = (Math.round(window.innerWidth) == 320);
-		document.body.className = is_portrait ? 'portrait' : 'landscape';
+		this.detectPortrait();
 		
 		css(one('#screens'), 'left', (window.innerWidth * this.screen * -1) + 'px');
 		this.resizeScreenContainer();
@@ -934,6 +938,14 @@ Fever.iPhone =
 		
 		this.resizeScreenContainer();
 	}
+};
+
+// silence errors from missing desktop functions
+Fever.Reader = {
+	updateRefreshProgress : function(){},
+	updateRefreshProgress : function(){},
+	updateFaviconCache : function(){},
+	updateAfterRefresh : function(){}
 };
 
 window.addEventListener('load', function() { Fever.iPhone.onload(); }, false);

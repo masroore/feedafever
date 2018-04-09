@@ -43,6 +43,13 @@ pre
 	overflow: auto;
 }
 
+#logo {
+	display: inline-block;
+	width: 50px;
+	height: 17px;
+	background-size: 50px 17px;
+}
+
 /* buttons */
 button
 {
@@ -130,19 +137,19 @@ button
 }
 
 .btn.text,
-.btn.text i		{ background-image: url(images/btn-text.png); }
-.btn.help 		{ background-image: url(images/btn-help.png); }
-.btn.refresh	{ background-image: url(images/btn-refresh.png); }
-.btn.cancel		{ background-image: url(images/btn-cancel.png); }
-.btn.add		{ background-image: url(images/btn-add.png); }
-.btn.text.feed	{ background-image: url(images/btn-text-feed.png); }
+.btn.text i		{ background-image: url(images/btn-text.png); background-size: 640px 48px; }
+.btn.help 		{ background-image: url(images/btn-help.png); background-size: 16px 16px; }
+.btn.refresh	{ background-image: url(images/btn-refresh.png); background-size: 16px 32px; }
+.btn.cancel		{ background-image: url(images/btn-cancel.png); background-size: 16px 32px; }
+.btn.add		{ background-image: url(images/btn-add.png); background-size: 16px 32px; }
+.btn.text.feed	{ background-image: url(images/btn-text-feed.png); background-size: 640px 48px; }
 
 .btn.menu.text,
-.btn.menu.text i	{ background-image: url(images/btn-menu-text.png); }
-.btn.menu.action	{ background-image: url(images/btn-menu-action.png); }
-.btn.menu.group		{ background-image: url(images/btn-menu-group.png); }
-.btn.menu.feed		{ background-image: url(images/btn-menu-feed.png); }
-.btn.menu.item		{ background-image: url(images/btn-menu-item.png); }
+.btn.menu.text i	{ background-image: url(images/btn-menu-text.png); background-size: 640px 32px; }
+.btn.menu.action	{ background-image: url(images/btn-menu-action.png); background-size: 28px 32px; }
+.btn.menu.group		{ background-image: url(images/btn-menu-group.png); background-size: 28px 32px; }
+.btn.menu.feed		{ background-image: url(images/btn-menu-feed.png); background-size: 28px 32px; }
+.btn.menu.item		{ background-image: url(images/btn-menu-item.png); background-size: 28px 32px; }
 
 .btn.text.feed
 {
@@ -253,6 +260,7 @@ s.box b
 	left: 0;
 	right: 7px;
 	background: url(images/bg-box.png) 0 0 no-repeat;
+	background-size: 2048px 48px;
 	
 	/** /
 	border: 1px solid red;
@@ -299,7 +307,8 @@ s.box i
 {
 	top: 8px;
 	bottom: 7px;
-	background: url(images/bg-box-content.png) 0 0 repeat-y;
+	background: url(images/bg-box-content-0.png) 0 0 repeat-y;
+	background-size: 2048px 1px;
 }
 
 s.box i i
@@ -335,6 +344,7 @@ form tr > *
 {
 	padding: 8px 10px 5px 0;
 	background: url(images/bg-form-divider.png) 50% 0 no-repeat;
+	background-size: 1024px 2px;
 }
 
 fieldset table:first-child tr:first-child > *
@@ -387,6 +397,7 @@ table.embedded th strong
 	left: 0;
 	
 	background: url(images/bg-form-header.png) 50% 100% no-repeat;
+	background-size: 335px 26px;
 	font-size: 9px;
 	line-height: 26px;
 	height: 26px;
@@ -495,9 +506,11 @@ input[type=radio]:focus
 	border: none;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
+	border-radius: 4px;
 	opacity: 0.95;
 	-webkit-box-shadow: 3px 3px 3px rgba(0,0,0,.1);
 	-moz-box-shadow: 3px 3px 3px rgba(0,0,0,.1);
+	box-shadow: 3px 3px 3px rgba(0,0,0,.1);
 }
 
 #menu-options
@@ -510,6 +523,7 @@ input[type=radio]:focus
 	border: none;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
+	border-radius: 4px;
 }
 
 #menu-options li
@@ -533,11 +547,13 @@ input[type=radio]:focus
 {
 	padding: 0 0 0 18px;
 	background: url(images/icon-shift.png) 2px 0 no-repeat;
+	background-size: 16px 32px;
 }
 
 #menu-options li.selected
 {
 	background: url(images/icon-check.png) 2px 0 no-repeat;
+	background-size: 16px 32px;
 }
 
 #menu-options li.disabled
@@ -579,6 +595,7 @@ input[type=radio]:focus
 	border: none;
 	-webkit-border-radius: 5px;
 	-moz-border-radius: 5px;
+	border-radius: 5px;
 }
 
 /* help */
@@ -605,11 +622,12 @@ input[type=radio]:focus
 	border: none;
 	-webkit-border-radius: 8px;
 	-moz-border-radius: 8px;
+	border-radius: 8px;
 	opacity: 0.9;
 	color: #FFF;
 	background-color: #333;
-	text-shadow: 0 0 0 #000;
 	-moz-text-shadow: 0 0 0 #000;
+	text-shadow: 0 0 0 #000;
 	width: 224px;
 	padding: 8px 10px;
 	font-size: 12px;
@@ -622,6 +640,7 @@ input[type=radio]:focus
 	width: 21px;
 	height: 48px;
 	background: url(images/bg-help.png) 8px 8px no-repeat;
+	background-size: 26px 32px;
 }
 
 #help dt
@@ -670,6 +689,7 @@ input[type=radio]:focus
 #dialog form
 {
 	background: url(images/bg-dialog.png) 0 0 no-repeat;
+	background-size: 708px 1024px;
 }
 
 #dialog h1
@@ -685,8 +705,8 @@ input[type=radio]:focus
 	line-height: 30px;
 	font-size: 12px;
 	color: #FFF;
-	text-shadow: 0 0 0 #000;
 	-moz-text-shadow: 0 0 0 #000;
+	text-shadow: 0 0 0 #000;
 }
 
 #dialog form
@@ -709,11 +729,13 @@ input[type=radio]:focus
 #dialog form.tabbed div.btn-row
 {
 	background: url(images/bg-dialog-form.gif) 50% 50% no-repeat;
+	background-size: 344px 987px;
 }
 
 #dialog form.tabbed div.btn-row fieldset
 {
 	background: url(images/bg-form-divider.png) 50% 0 no-repeat;
+	background-size: 1024px 2px;
 	padding: 8px 6px 4px 0;
 }
 
@@ -728,6 +750,7 @@ input[type=radio]:focus
 #dialog ul.tabs li a
 {
 	background: url(images/bg-tab.png) 0 0 no-repeat;
+	background-size: 512px 52px;
 }
 
 #dialog ul.tabs li
@@ -791,6 +814,7 @@ input[type=radio]:focus
 #dialog h2
 {
 	background: url(images/bg-dialog-form.gif) 0 0 no-repeat;
+	background-size: 344px 987px;
 }
 
 #dialog fieldset
@@ -849,6 +873,7 @@ input[type=radio]:focus
 	border: none;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
+	border-radius: 4px;
 }
 
 #dragger em
@@ -878,6 +903,7 @@ ul.errors li
 {
 	padding-left: 22px !important;
 	background: url(images/bg-error.png) 0 1px no-repeat !important;
+	background-size: 18px 14px !important;
 }
 
 /* debug */
@@ -990,11 +1016,6 @@ ul.errors li
 /* for Safari only */
 @media screen and (-webkit-min-device-pixel-ratio:0) 
 {
-	body
-	{
-		-webkit-text-size-adjust: none;
-	}
-	
 	.btn
 	{
 		line-height: 15px;
@@ -1003,11 +1024,6 @@ ul.errors li
 	.btn.file input
 	{
 		left: 0; /* fubar in FF */
-	}
-	
-	.item-content
-	{
-		-webkit-text-size-adjust: auto;
 	}
 }
 
@@ -1028,8 +1044,122 @@ ul.errors li
 /* for MobileSafari only */
 @media only screen and (max-device-width: 480px)
 {
+	body
+	{
+		-webkit-text-size-adjust: none;
+	}
+	
+	.item-content
+	{
+		-webkit-text-size-adjust: auto;
+	}
+	
 	.btn.text i
 	{
 		right: -16px;
+	}
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+	#logo {
+		background-image: url(../../../images/logo-fever@2x.png);
+	}
+	#logo img {
+		opacity: 0;
+	}
+	
+	body
+	{
+/*		background-image: url(images/bg@2x.png);*/
+	}
+
+	.btn.text,
+	.btn.text i		{ background-image: url(images/btn-text@2x.png); }
+	.btn.help 		{ background-image: url(images/btn-help@2x.png); }
+	.btn.refresh	{ background-image: url(images/btn-refresh@2x.png); }
+	.btn.cancel		{ background-image: url(images/btn-cancel@2x.png); }
+	.btn.add		{ background-image: url(images/btn-add@2x.png); }
+	.btn.text.feed	{ background-image: url(images/btn-text-feed@2x.png); }
+
+	.btn.menu.text,
+	.btn.menu.text i	{ background-image: url(images/btn-menu-text@2x.png); }
+	.btn.menu.action	{ background-image: url(images/btn-menu-action@2x.png); }
+	.btn.menu.group		{ background-image: url(images/btn-menu-group@2x.png); }
+	.btn.menu.feed		{ background-image: url(images/btn-menu-feed@2x.png); }
+	.btn.menu.item		{ background-image: url(images/btn-menu-item@2x.png); }
+
+	s.box u,
+	s.box i,
+	s.box b
+	{
+		background-image: url(images/bg-box@2x.png);
+	}
+
+	s.box i
+	{
+		background-image: url(images/bg-box-content-0@2x.png);
+	}
+
+	form tr > *
+	{
+		background-image: url(images/bg-form-divider@2x.png);
+	}
+
+	table.embedded th strong
+	{
+		background-image: url(images/bg-form-header@2x.png);
+	}
+
+	#menu-options li span.key.shift
+	{
+		background-image: url(images/icon-shift@2x.png);
+	}
+
+	#menu-options li.selected
+	{
+		background-image: url(images/icon-check@2x.png);
+	}
+
+	#help-dangle
+	{
+		background-image: url(images/bg-help@2x.png);
+	}
+
+	#dialog-container
+	{
+/*		background-image: url(images/bg-dialog-screen@2x.png);*/
+	}
+
+	#dialog h1,
+	#dialog form
+	{
+		background-image: url(images/bg-dialog@2x.png);
+	}
+
+	#dialog form.tabbed div.btn-row
+	{
+		background-image: url(images/bg-dialog-form@2x.gif);
+	}
+
+	#dialog form.tabbed div.btn-row fieldset
+	{
+		background-image: url(images/bg-form-divider@2x.png);
+	}
+
+	#dialog ul.tabs li,
+	#dialog ul.tabs li a
+	{
+		background-image: url(images/bg-tab@2x.png);
+	}
+
+	#dialog fieldset,
+	#dialog h2
+	{
+		background-image: url(images/bg-dialog-form@2x.gif);
+	}
+
+	ul.errors li 
+	{
+		background-image: url(images/bg-error@2x.png) !important;
 	}
 }

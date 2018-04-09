@@ -4,7 +4,6 @@
 	<h1>Installation</h1>
 	<h2>Database Connection</h2>
 	
-	<!-- todo: verbosify -->
 	<p>Fever needs to know how to connect to your MySQL database.</p>
 	
 	<table>

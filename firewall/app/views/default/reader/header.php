@@ -12,6 +12,7 @@
 <meta name="viewport" id="viewport" content="width=1024" />
 <link rel="shortcut icon" type="image/png" href="firewall/app/images/favicon.png" />
 <link rel="stylesheet" type="text/css" href="firewall/app/views/default/styles/reader.css?v=<?php e($this->version);?>" />
+<?php e($this->override_link());?>
 <script type="text/javascript" src="firewall/app/views/default/scripts/fever.js?v=<?php e($this->version);?>"></script>
 <script type="text/javascript" src="firewall/app/views/default/scripts/reader.js?v=<?php e($this->version);?>"></script>
 <script type="text/javascript" language="javascript">
@@ -60,7 +61,7 @@ if (!empty($body_class))
 	<div id="fixed">
 		<div class="container">
 			<div id="fever">
-				<img id="logo" src="firewall/app/images/logo-fever.png" alt="fever&deg;" title="Fever <?php e($this->formatted_version()); ?>" />
+				<span id="logo"><img src="firewall/app/images/logo-fever.png" width="50" height="17" alt="fever&deg;" title="Fever <?php e($this->formatted_version()." (Using {$this->dbc->api})"); ?>" /></span>
 				<span class="btn menu action" onclick="Fever.displayMenu(this, 'action');"></span>
 			</div><!-- #fever -->
 			

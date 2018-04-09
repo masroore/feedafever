@@ -123,7 +123,8 @@ ul.source-list li,
 {
 	position: relative;
 	min-height: 38px;
-	background: #E5E5E5 url(images/bg-row.gif) 0 0 repeat-x;
+	background: #E5E5E5 url(images/bg-row.gif?v=133) 0 0 repeat-x;
+	background-size: 1px 1000px;
 	border-top: 1px solid rgba(255, 255, 255, 0.5);
 	border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
@@ -159,7 +160,8 @@ ul.source-list li a,
 #login h1
 {
 	text-indent: -9999px;
-	background: url(images/logo-login.png) 0 0 no-repeat;
+	background: url(images/logo-login.png?v=133) 0 0 no-repeat;
+	background-size: 246px 273px;
 	width: 246px;
 	height: 274px;
 	margin: 18px auto;
@@ -333,8 +335,6 @@ input[type=search]
 	height: 24px;
 	font-size: inherit;
 	line-height: 1px;
-	border: none;
-	background: transparent url(images/bg-search.png) 0 0 no-repeat;
 	margin: 0;
 	padding: 1px 8px 0;
 }
@@ -359,7 +359,8 @@ input[type=search]
 	width: 39px;
 	height: 27px;
 	text-indent: -9999px;
-	background: url(images/txt-tmp.gif) 0 0 no-repeat;
+	background: url(images/txt-tmp.gif?v=133) 0 0 no-repeat;
+	background-size: 39px 276px;
 	margin: 0 0 2px; 
 }
 
@@ -396,7 +397,8 @@ button
 	line-height: 24px;
 	font-weight: bold;
 	color: #333;
-	background: url(images/bg-btn.gif) 0 0 repeat-x;
+	background: url(images/bg-btn.gif?v=133) 0 0 repeat-x;
+	background-size: 1px 48px;
 	border: 1px solid #2E2E2E;
 	-webkit-border-radius: 12px;
 	margin: -1px 0 0;
@@ -416,7 +418,8 @@ button
 	display: inline-block;
 	width: 6px;
 	height: 10px;
-	background: url(images/icon-back.png) 0 0 no-repeat;
+	background: url(images/icon-back.png?v=133) 0 0 no-repeat;
+	background-size: 6px 20px;
 }
 
 .btn.forward
@@ -434,7 +437,8 @@ button
 	display: inline-block;
 	width: 6px;
 	height: 10px;
-	background: url(images/icon-forward.png) 0 0 no-repeat;
+	background: url(images/icon-forward.png?v=133) 0 0 no-repeat;
+	background-size: 6px 20px;
 }
 
 .btn.menu
@@ -452,7 +456,8 @@ button
 	display: inline-block;
 	width: 10px;
 	height: 6px;
-	background: url(images/icon-menu.png) 0 0 no-repeat;
+	background: url(images/icon-menu.png?v=133) 0 0 no-repeat;
+	background-size: 10px 6px;
 	opacity: 0.25;
 }
 
@@ -463,7 +468,8 @@ button
 	top: 4px;
 	width: 16px;
 	height: 16px;
-	background-image: url(images/spinner.gif) !important;
+	background-image: url(images/spinner.gif?v=133) !important;
+	background-size: 16px 16px;
 }
 
 .btn.forward.spinning
@@ -485,7 +491,8 @@ button
 .btn.menu.spinning:after
 {
 	right: 4px;
-	background-image: url(images/spinner-dark.gif) !important;
+	background-image: url(images/spinner-dark.gif?v=133) !important;
+	background-size: 16px 16px;
 	opacity: 1.0;
 }
 
@@ -512,7 +519,8 @@ button
 	display: block;
 	width: 30px;
 	height: 17px;
-	background: url(images/icon-action.png) 0 0 no-repeat;
+	background: url(images/icon-action.png?v=133) 0 0 no-repeat;
+	background-size: 30px 34px;
 }
 
 /** /
@@ -538,7 +546,8 @@ button
 	display: block;
 	width: 28px;
 	height: 17px;
-	background: url(images/icon-safari.png) 0 0 no-repeat;
+	background: url(images/icon-safari.png?v=133) 0 0 no-repeat;
+	background-size: 28px 34px;
 }
 
 /** /
@@ -573,12 +582,14 @@ button
 	left: 7px;
 	width: 29px;
 	height: 34px;
-	background: url(images/logo.png) 0 0 no-repeat;
+	background: url(images/logo.png?v=133) 0 0 no-repeat;
+	background-size: 29px 34px;
 }
 
 #fever .header .left.spinning
 {
-	background-image: url(images/logo-spinner.gif);
+	background-image: url(images/logo-spinner.gif?v=133);
+	background-size: 29px 34px;
 }
 
 #fever .header .title
@@ -630,32 +641,38 @@ button
 
 #feed-0:before
 {
-	background-image: url(images/icon-unread.png);
+	background-image: url(images/icon-unread.png?v=133);
+	background-size: 24px 48px;
 }
 
 #section-0:before
 {
-	background-image: url(images/icon-hot.png);
+	background-image: url(images/icon-hot.png?v=133);
+	background-size: 24px 48px;
 }
 
 #group-0:before
 {
-	background-image: url(images/icon-kindling.png);
+	background-image: url(images/icon-kindling.png?v=133);
+	background-size: 24px 48px;
 }
 
 #section-2:before
 {
-	background-image: url(images/icon-saved.png);
+	background-image: url(images/icon-saved.png?v=133);
+	background-size: 24px 48px;
 }
 
 #section-3:before
 {
-	background-image: url(images/icon-sparks.png);
+	background-image: url(images/icon-sparks.png?v=133);
+	background-size: 24px 48px;
 }
 
 #section-4:before
 {
-	background-image: url(images/icon-search.png);
+	background-image: url(images/icon-search.png?v=133);
+	background-size: 24px 48px;
 }
 
 li.spinning:before
@@ -669,7 +686,8 @@ li.spinning:before
 	content: '';
 	background-position: 50% 0;
 	background-repeat: no-repeat;
-	background-image: url(images/spinner.gif) !important;
+	background-image: url(images/spinner.gif?v=133) !important;
+	background-size: 16px 16px !important;
 }
 
 ul.source-list li.spinning:before
@@ -690,7 +708,8 @@ li.spinning a i.favicon
 	height: 24px;
 	vertical-align: middle;
 	content: '';
-	background: url(images/icon-group.png) 0 -24px no-repeat;
+	background: url(images/icon-group.png?v=133) 0 -24px no-repeat;
+	background-size: 24px 48px;
 	opacity: 0.8;
 	margin: -6px -4px 0;
 }
@@ -703,43 +722,51 @@ li.spinning a i.favicon
 
 #hot .header .title:before
 {
-	background-image: url(images/icon-hot.png);
+	background-image: url(images/icon-hot.png?v=133);
+	background-size: 24px 48px;
 }
 
 .header .title.kindling:before
 {
-	background-image: url(images/icon-kindling.png);
+	background-image: url(images/icon-kindling.png?v=133);
+	background-size: 24px 48px;
 }
 
 .header .title.saved:before
 {
-	background-image: url(images/icon-saved.png);
+	background-image: url(images/icon-saved.png?v=133);
+	background-size: 24px 48px;
 }
 
 .header .title.sparks:before
 {
-	background-image: url(images/icon-sparks.png);
+	background-image: url(images/icon-sparks.png?v=133);
+	background-size: 24px 48px;
 }
 
 .header .title.search:before
 {
-	background-image: url(images/icon-search.png);
+	background-image: url(images/icon-search.png?v=133);
+	background-size: 24px 48px;
 }
 
 .header .title.unread:before
 {
 	margin-top: -8px;
-	background-image: url(images/icon-unread.png);
+	background-image: url(images/icon-unread.png?v=133);
+	background-size: 24px 48px;
 }
 
 .header .title.feed:before
 {
-	background-image: url(images/icon-feed.png);
+	background-image: url(images/icon-feed.png?v=133);
+	background-size: 24px 48px;
 }
 
 body.spinning .header .title:before
 {
-	background: url(images/spinner-dark.gif) 4px 6px no-repeat;
+	background: url(images/spinner-dark.gif?v=133) 4px 6px no-repeat;
+	background-size: 16px 16px;
 }
 
 
@@ -779,14 +806,16 @@ body.spinning .header .title:before
 #hot .box
 {
 	padding: 15px 2px 2px 54px;
-	background-image: url(images/bg-temperature.gif);
+	background-image: url(images/bg-temperature.gif?v=133);
+	background-size: 239px 9px;
 	background-position: 56px 5px;
 	background-repeat: no-repeat;
 }
 
 body.landscape #hot .box
 {
-	background-image: url(images/bg-temperature-landscape.gif);
+	background-image: url(images/bg-temperature-landscape.gif?v=133);
+	background-size: 399px 9px;
 }
 
 i.favicon,
@@ -822,7 +851,8 @@ i.favicon.icon
 i.favicon.icon i
 {
 	-webkit-background-size: auto;
-	background: url(images/icon-favicon.png) -4px -6px no-repeat;
+	background: url(images/icon-favicon.png?v=133) -4px -6px no-repeat;
+	background-size: 24px 48px;
 }
 
 /** /
@@ -928,7 +958,8 @@ ul.source-list li i.favicon
 	left: 2px;
 	right: 2px;
 	height: 29px;
-	background: #E5E5E5 url(images/bg-row.gif) 0 0 repeat-x;
+	background: #E5E5E5 url(images/bg-row.gif?v=133) 0 0 repeat-x;
+	background-image: 1px 1000px;
 	border-bottom: 1px solid rgba(0, 0, 0, 0.02);
 	border-top: none;
 	-webkit-border-top-left-radius: 6px;
@@ -967,7 +998,8 @@ ul.source-list li i.favicon
 	left: 8px;
 	width: 17px;
 	height: 18px;
-	background: url(images/bg-state.png) 0 0 no-repeat;
+	background: url(images/bg-state.png?v=133) 0 0 no-repeat;
+	background-size: 64px 128px;
 }
 
 .item .meta .state
@@ -1029,12 +1061,14 @@ ul.source-list li i.favicon
 	width: 72px;
 	height: 72px;
 	margin: -24px -12px 0;
-	background: url(images/icon-webview-favicon.png) 0 -72px no-repeat;
+	background: url(images/icon-webview-favicon.png?v=133) 0 -72px no-repeat;
+	background-size: 72px 144px;
 }
 
 #webview .header .title.spinning:before
 {
-	background: url(images/spinner-webview.gif) 15px 21px no-repeat;
+	background: url(images/spinner-webview.gif?v=133) 15px 21px no-repeat;
+	background-size: 42px 42px;
 }
 
 #webview .header .left
@@ -1069,7 +1103,8 @@ ul.source-list li i.favicon
 	left: -9px;
 	width: 18px;
 	height: 30px;
-	background: url(images/icon-webview-back.png) 0 0 no-repeat;
+	background: url(images/icon-webview-back.png?v=133) 0 0 no-repeat;
+	background-size: 18px 60px;
 }
 
 #webview .btn.safari
@@ -1083,14 +1118,18 @@ ul.source-list li i.favicon
 	left: 24px;
 	width: 84px;
 	height: 51px;
-	background: url(images/icon-webview-safari.png) 0 0 no-repeat;
+	background: url(images/icon-webview-safari.png?v=133) 0 0 no-repeat;
+	background-size: 84px 102px;
 }
 
 #iframe
 {
 	width: 100%;
 	height: 100%;
-	/** /background: url(images/spinner-webview.gif) 50% 40% no-repeat;/**/
+	/** /
+	background: url(images/spinner-webview.gif?v=133) 50% 40% no-repeat;
+	background-size: 42px 42px;
+	/**/
 }
 
 body.action
@@ -1148,7 +1187,8 @@ body.action #action *
 	padding: 12px;
 	color: #FFF;
 	font-weight: bold;
-	background: #333 url(images/bg-form.png) 0 0 repeat-x;
+	background: #333 url(images/bg-form.png?v=133) 0 0 repeat-x;
+	background-size: 1px 65px;
 }
 
 .action-close
@@ -1160,12 +1200,14 @@ body.action #action *
 	text-indent: -9999px;
 	width: 24px;
 	height: 24px;
-	background: url(images/form-close.png) 0 0 no-repeat;
+	background: url(images/form-close.png?v=133) 0 0 no-repeat;
+	background-size: 24px 24px;
 }
 
 .checkbox
 {
-	background: url(images/form-checkbox.png) 0 0 no-repeat;
+	background: url(images/form-checkbox.png?v=133) 0 0 no-repeat;
+	background-size: 24px 48px;
 	line-height: 24px;
 	padding-left: 30px;
 	margin: 0 36px 12px 0;
@@ -1238,7 +1280,8 @@ body.dialog #dialog-container *
 	padding: 12px;
 	color: #FFF;
 	font-weight: bold;
-	background: #333 url(images/bg-form.png) 0 0 repeat-x;
+	background: #333 url(images/bg-form.png?v=133) 0 0 repeat-x;
+	background-size: 1px 65px;
 }
 
 #dialog h1,
@@ -1276,12 +1319,14 @@ body.dialog #dialog-container *
 	text-indent: -9999px;
 	width: 24px;
 	height: 24px;
-	background: url(images/form-close.png) 0 0 no-repeat;
+	background: url(images/form-close.png?v=133) 0 0 no-repeat;
+	background-size: 24px 24px;
 }
 
 #dialog .checkbox
 {
-	background: url(images/form-checkbox.png) 0 0 no-repeat;
+	background: url(images/form-checkbox.png?v=133) 0 0 no-repeat;
+	background-size: 24px 48px;
 	line-height: 24px;
 	padding-left: 30px;
 	margin: 0 36px 12px 0;
@@ -1309,7 +1354,8 @@ body.dialog #dialog-container *
 
 .checkbox
 {
-	background: url(images/form-checkbox.png) 0 0 no-repeat;
+	background: url(images/form-checkbox.png?v=133) 0 0 no-repeat;
+	background-size: 24px 48px;
 	line-height: 24px;
 	padding-left: 30px;
 	margin: 0 36px 12px 0;
@@ -1363,6 +1409,7 @@ body.landscape
 
 /* 4" iOS overrides */
 @media only screen and (min-device-width : 320px) and (max-device-width : 568px) {
+	/* affect by height change only */
     body.landscape #screens-container
 	{
 		width: 560px;
@@ -1386,6 +1433,122 @@ body.landscape
 	.landscape input[type=search]
 	{
 		width: 491px;
-		background-position: 0 -48px;
+	}
+}
+
+/* 4.7" iOS overrides */
+@media only screen and (min-device-width : 375px) and (max-device-width : 667px) {
+	/* width and height, sigh */
+	#screens-container
+	{
+		width: 375px; /* width */
+	}
+
+	body.landscape #screens-container
+	{
+		width: 667px; /* height */
+	}
+
+	#screens
+	{
+		width: 2668px; /* height * 4 */
+	}
+
+	.screen
+	{
+		width: 359px; /* width - 16 */
+	}
+
+	body.landscape .screen
+	{
+		width: 651px; /* height - 16 */
+	}
+
+	input[type=search]
+	{
+		width: 306px; /* width - 69 */
+	}
+
+	.landscape input[type=search]
+	{
+		width: 598px; /* height - 69 */ 
+	}
+
+	#fever .footer .left /* width - 96 */
+	{
+		max-width: 279px;
+	}
+
+	body
+	{
+		min-height: 667px; /* height */
+	}
+
+	body.landscape
+	{
+		min-height: 375px; /* width */
+	}
+	
+	.item-content
+	{
+		max-width: 480px !important; /* based on line-length */ 
+	}
+}
+
+/* 4.7" iOS overrides */
+@media only screen and (min-device-width : 414px) and (max-device-width : 736px) {
+	#screens-container
+	{
+		width: 414px; /* width */
+	}
+
+	body.landscape #screens-container
+	{
+		width: 736px; /* height */
+	}
+
+	#screens
+	{
+		width: 2944px; /* height * 4 */
+	}
+
+	.screen
+	{
+		width: 398px; /* width - 16 */
+	}
+
+	body.landscape .screen
+	{
+		width: 720px; /* height - 16 */
+	}
+
+	input[type=search]
+	{
+		width: 345px; /* width - 69 */
+	}
+
+	.landscape input[type=search]
+	{
+		width: 667px; /* height - 69 */ 
+	}
+
+	#fever .footer .left
+	{
+		max-width: 318px; /* width - 96 */
+	}
+
+	body
+	{
+		min-height: 736px; /* height */
+	}
+
+	body.landscape
+	{
+		min-height: 414px; /* width */
+	}
+	
+	.item-content
+	{
+		max-width: 600px !important; /* based on line-length */ 
 	}
 }

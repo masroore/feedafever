@@ -9,6 +9,7 @@ if (isset($_SERVER['HTTP_REFERER']) && m('#[\?&]errors\b#', $_SERVER['HTTP_REFER
 	error_reporting(E_ALL);
 }
 
+include(FIREWALL_ROOT.'app/libs/SIDB423.php');
 include(FIREWALL_ROOT.'app/libs/fever.php');
 include(FIREWALL_ROOT.'config/db.php');
 include(FIREWALL_ROOT.'config/key.php');

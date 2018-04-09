@@ -61,7 +61,7 @@ $class .= $item_excerpts ? '' : ' full';
 <?php else:?>
 <?php
 $msg = '';
-// todo: format and style, in links too
+// TODO: format and style, in links too
 if ($this->page == 1)
 {
 	switch($this->prefs['ui']['section'])

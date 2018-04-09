@@ -18,11 +18,13 @@
 .page s.box b
 {
 	background-image: url(images/bg-page.png);
+	background-size: 2048px 14px;
 }
 
 .page s.box i
 {
 	background-image: url(images/bg-page-content.png);
+	background-size: 2048px 1px;
 }
 
 .page s.box b
@@ -62,8 +64,8 @@
 	font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 	font-weight: 300;
 	color: #FFF;
-	text-shadow: 1px 1px 1px #CCC;
 	-moz-text-shadow: 1px 1px 1px #CCC;
+	text-shadow: 1px 1px 1px #CCC;
 	padding: 17px 0 0;
 	margin: 0 13px 13px;
 }
@@ -87,6 +89,7 @@
 	padding: 8px 15px;
 	margin: 0 3px 0 2px;
 	background: url(images/bg-form-divider.png) 50% 0 no-repeat;
+	background-size: 1024px 2px;
 }
 
 .text a
@@ -200,6 +203,7 @@
 	display: inline-block;
 	background-repeat: no-repeat;
 	background-image: url(images/icon-shift.png);
+	background-size: 16px 32px;
 	background-position: 0 0;
 	padding-left: 16px;
 }
@@ -215,3 +219,31 @@ label.guess
 	color: #a26731;
 }
 
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+	.page s.box u,
+	.page s.box i,
+	.page s.box b
+	{
+		background-image: url(images/bg-page@2x.png);
+	}
+
+	.page s.box i
+	{
+		background-image: url(images/bg-page-content@2x.png);
+	}
+
+	.page s.box s
+	{
+/*		background-image: url(images/bg-page-gradient@2x.png);*/
+	}
+
+	.page p.btn-row
+	{
+		background-image: url(images/bg-form-divider@2x.png);
+	}
+
+	#shortcuts span.shift
+	{
+		background-image: url(images/icon-shift@2x.png);
+	}
+}

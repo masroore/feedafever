@@ -22,11 +22,18 @@ class OMDOMDOM
 		// convert decoding where necessary
 		if ($encoding != 'UTF-8')
 		{
-			if (function_exists('iconv')) {
-			    if ($encoding == 'WINDOWS-1250') $xml = iconv('CP1250', 'UTF-8', $xml);
-				else if ($encoding == 'WINDOWS-1256') $xml = iconv('CP1256', 'UTF-8', $xml);
+			$do_fallback = true;
+			if (function_exists('iconv'))
+			{
+				$converted_xml = iconv($encoding, 'UTF-8', $xml);
+				if ($converted_xml !== false)
+				{
+					$xml = $converted_xml;
+					$do_fallback = false;
+				}
 			}
-			else if (function_exists('mb_convert_encoding'))
+			
+			if ($do_fallback && function_exists('mb_convert_encoding'))
 			{
 				$xml = mb_convert_encoding($xml, 'UTF-8', $encoding);
 			}

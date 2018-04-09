@@ -63,7 +63,7 @@ $item_class    .= $link['is_saved'] ? ' saved' : '';
 <?php endforeach;?>
 <?php else:?>
 <?php
-// todo: format and style, in items too
+// TODO: format and style, in items too
 $msg = '';
 if ($this->page == 1)
 {

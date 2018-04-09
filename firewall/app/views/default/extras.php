@@ -12,7 +12,7 @@ if (strpos($refresh_url, 'https') === 0)
 {
 	$curl_options .= ' -k';
 }
-$curl_options .= ' '.$refresh_url;
+$curl_options .= " '{$refresh_url}'";
 
 
 ?>

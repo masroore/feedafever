@@ -5,15 +5,15 @@ div.box:hover s.box u	{ background-position: 0 -16px; }
 div.box:hover s.box u u	{ background-position: 100% -16px; }
 div.box:hover s.box b	{ background-position: 0 -25px; }
 div.box:hover s.box b b	{ background-position: 100% -25px; }
-div.box:hover s.box i	{ background-position: -2048px 0; }
-div.box:hover s.box i i	{ background-position: -4089px 0; }
+div.box:hover s.box i	{ background-image: url(images/bg-box-content-1.png); }
+div.box:hover s.box i i	{ }
 
 div.box.has-focus s.box u	{ background-position: 0 -32px; }
 div.box.has-focus s.box u u	{ background-position: 100% -32px; }
 div.box.has-focus s.box b	{ background-position: 0 -41px; }
 div.box.has-focus s.box b b	{ background-position: 100% -41px; }
-div.box.has-focus s.box i	{ background-position: -4096px 0; }
-div.box.has-focus s.box i i	{ background-position: -6137px 0; }
+div.box.has-focus s.box i	{ background-image: url(images/bg-box-content-2.png); }
+div.box.has-focus s.box i i	{ }
 
 /* update and status, loosely based on .box and .box-list */
 div.update-available,
@@ -41,18 +41,21 @@ div.status,
 div.status s
 {
 	background: url(images/bg-status.png) 0 0 no-repeat;
+	background-size: 1024px 30px;
 }
 
 div.update-available,
 div.update-available s
 {
 	background: url(images/bg-update.png) 0 0 no-repeat;
+	background-size: 1024px 30px;
 }
 
 div.no-update-available,
 div.no-update-available s
 {
 	background: url(images/bg-notice.png) 0 0 no-repeat;
+	background-size: 1024px 30px;
 }
 
 /* right cap (s = side) */
@@ -73,8 +76,8 @@ div.update-available .content
 {
 	color: #FFF;
 	font-weight: bold;
-	text-shadow: 1px 1px 1px #800e0e;
 	-moz-text-shadow: 1px 1px 1px #800e0e;
+	text-shadow: 1px 1px 1px #800e0e;
 }
 
 div.update-available .btn
@@ -133,6 +136,7 @@ div.status .timestamp
 .item .meta h2 a
 {
 	background: url(images/bg-box-list.png) 0 0 no-repeat;
+	background-size: 2038px 150px;
 	
 	white-space: nowrap; 
 	overflow: hidden;
@@ -292,8 +296,9 @@ i.favicon i
 
 i.favicon i
 {
-	-moz-background-size: 16px;
 	-webkit-background-size: 16px;
+	-moz-background-size: 16px;
+	background-size: 16px;
 	background-repeat: no-repeat;
 }
 
@@ -305,6 +310,7 @@ i.favicon i
 #dragger .favicon
 {
 	background: url(images/bg-favicon.png) 0 0 no-repeat;
+	background-size: 22px 22px;
 	padding: 3px;
 	position: absolute;
 	top: 4px;
@@ -318,6 +324,7 @@ i.favicon i
 #dragger .favicon.icon
 {
 	background-image: url(images/icon-favicon.png);
+	background-size: 16px 32px;
 	padding: 0;
 	position: absolute;
 	top: 7px;
@@ -352,12 +359,17 @@ li.target .icon
 	background-position: 0 -22px;
 }
 
+#groups .icon
+{
+	background-size: 22px 44px;
+}
+
 .icon.hot		{ background-image: url(images/icon-hot.png); }
 .icon.kindling	{ background-image: url(images/icon-kindling.png); }
 .icon.saved		{ background-image: url(images/icon-saved.png); }
 .icon.spark		{ background-image: url(images/icon-spark.png); }
 .icon.search	{ background-image: url(images/icon-search.png); }
-.icon.unread	{ background-image: url(images/icon-unread.png); }
+.icon.unread	{ background-image: url(images/icon-unread.png); background-size: 22px 44px; }
 .icon.trash		{ background-image: url(images/icon-trash.png); }
 
 /* hot options */
@@ -405,6 +417,7 @@ li.target .icon
 	top: 7px;
 	height: 18px;
 	background: url(images/bg-search.png) 0 0 no-repeat;
+	background-size: 640px 36px;
 }
 
 .search.q /* thank FF for this otherwise unnecessary wrapper */
@@ -448,6 +461,7 @@ li.target .icon
 	width: 16px;
 	cursor: pointer;
 	background: url(images/bg-blacklist.png) 0 0 no-repeat;
+	background-size: 16px 16px;
 }
 
 /* remove */
@@ -557,6 +571,7 @@ li.target .icon
 	width: 17px;
 	height: 18px;
 	background: url(images/bg-state.png) 0 0 no-repeat;
+	background-size: 64px 128px;
 	cursor: pointer;
 	z-index: 100;
 	text-indent: -9999px;
@@ -632,15 +647,18 @@ li.target .icon
 #mercury
 {
 	max-height: 100%;
+	min-height: 4px;
 	
 	position: absolute;
 	left: 0;
 	bottom: 0;
 	width: 4px;
 	background: #A10 url(images/bg-mercury.gif) 0 0 repeat;
+	background-size: 8px 8px;
 	border: none;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
+	border-radius: 2px;
 }
 
 #mercury .label
@@ -657,6 +675,7 @@ li.target .icon
 	border: none;
 	-webkit-border-radius: 4px;
 	-moz-border-radius: 4px;
+	border-radius: 4px;
 	opacity: 0.9;
 	background-color: #DDD;
 }
@@ -674,6 +693,7 @@ li.target .icon
 	display: block;
 	width: 12px;
 	background: url(images/bg-thermometer.png) 0 0 no-repeat;
+	background-size: 12px 2400px;
 }
 
 .thermometer u
@@ -705,6 +725,7 @@ li.target .icon
 	bottom: 3px;
 	width: 16px;
 	background: url(images/bg-temperature.png) 0 100% repeat-y;
+	background-size: 16px 16px;
 }
 
 .notches b
@@ -719,6 +740,7 @@ li.target .icon
 	border: none;
 	-webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
+	border-radius: 2px;
 }
 
 .temperature
@@ -942,7 +964,8 @@ li.target .icon
 {
 	color: #999;
 	line-height: 18px;
-	background: url(../styles/images/bg-alpha.png) 0 50% no-repeat;
+	background: url(images/bg-alpha.png) 0 50% no-repeat;
+	background-size: 72px 1024px;
 }
 
 #feeds-alpha li a
@@ -991,6 +1014,7 @@ li.target .icon
 #fever.loading
 {
 	background: url(../styles/images/spinner.gif) 33px 20px no-repeat;
+	background-size: 16px 16px;
 }
 
 #refreshing
@@ -1067,6 +1091,7 @@ li.target .icon
 {
 	height: 30px;
 	background: url(images/bg-status.png) 0 0 no-repeat;
+	background-size: 1024px 30px;
 }
 
 #inline-read s
@@ -1122,5 +1147,152 @@ li.target .icon
 	head~body .notches b
 	{
 		height: 100%;
+	}
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+	div.box:hover s.box i	{ background-image: url(images/bg-box-content-1@2x.png); }
+
+	div.box.has-focus s.box i	{ background-image: url(images/bg-box-content-2@2x.png); }
+
+	div.status,
+	div.status s
+	{
+		background-image: url(images/bg-status@2x.png);
+	}
+
+	div.update-available,
+	div.update-available s
+	{
+		background-image: url(images/bg-update@2x.png);
+	}
+
+	div.no-update-available,
+	div.no-update-available s
+	{
+		background-image: url(images/bg-notice@2x.png);
+	}
+
+	.box-list li,
+	.box-list li a,
+	.box-list li form,
+	.source-list li,
+	.source-list li .source,
+	.item .meta h2,
+	.item .meta h2 a
+	{
+		background-image: url(images/bg-box-list@2x.png);
+	}
+
+	.box-list > li:first-child,
+	.box-list > li:first-child a,
+	.box-list li:first-child form,
+	.item .meta h2,
+	.item .meta h2 a
+	{
+		background-image: url(images/bg-box-list-top@2x.png);
+	}
+
+	.box-list > li:last-child,
+	.box-list > li:last-child a,
+	.box-list li:last-child form,
+	.source-list li:last-child,
+	.source-list li:last-child .source
+	{
+		background-image: url(images/bg-box-list-bottom@2x.png);
+	}
+
+	/* undo nested */
+	.box-list .box-list > li:first-child,
+	.box-list .box-list > li:first-child a,
+	.box-list .box-list > li:last-child,
+	.box-list .box-list > li:last-child a
+	{
+		background-image: url(images/bg-box-list@2x.png);
+	}
+
+	.box-list .icon,
+	.box-list .favicon,
+	.source-list .favicon,
+	.item .meta .favicon,
+	.status .favicon,
+	#dragger .favicon
+	{
+		background-image: url(images/bg-favicon@2x.png);
+	}
+
+	.box-list .favicon.icon,
+	.source-list .favicon.icon,
+	.item .meta .favicon.icon,
+	.status .favicon.icon,
+	#dragger .favicon.icon
+	{
+		background-image: url(images/icon-favicon@2x.png);
+	}
+
+	.box-list .favicon.icon.locked,
+	.source-list .favicon.icon.locked,
+	.item .meta .favicon.icon.locked,
+	.status .favicon.icon.locked,
+	#dragger .favicon.icon.locked
+	{
+		background-image: url(images/icon-favicon-locked@2x.png);
+	}
+
+	.icon.hot		{ background-image: url(images/icon-hot@2x.png); }
+	.icon.kindling	{ background-image: url(images/icon-kindling@2x.png); }
+	.icon.saved		{ background-image: url(images/icon-saved@2x.png); }
+	.icon.spark		{ background-image: url(images/icon-spark@2x.png); }
+	.icon.search	{ background-image: url(images/icon-search@2x.png); }
+	.icon.unread	{ background-image: url(images/icon-unread@2x.png); }
+	.icon.trash		{ background-image: url(images/icon-trash@2x.png); }
+
+	.search,
+	.btn.cancel.search
+	{
+		background-image: url(images/bg-search@2x.png);
+	}
+
+	.btn.blacklist
+	{
+		background-image: url(images/bg-blacklist@2x.png);
+	}
+
+	.item .meta .state,
+	.link .meta .state
+	{
+		background-image: url(images/bg-state@2x.png);
+	}
+
+	#mercury
+	{
+		background-image: url(images/bg-mercury@2x.gif);
+	}
+
+	.thermometer u,
+	.thermometer b
+	{
+		background-image: url(images/bg-thermometer@2x.png);
+	}
+
+	.notches
+	{
+		background-image: url(images/bg-temperature@2x.png);
+	}
+
+	#feeds-alpha li
+	{
+		background-image: url(images/bg-alpha@2x.png);
+	}
+
+	#fever.loading
+	{
+		background-image: url(images/spinner@2x.gif);
+	}
+
+	#inline-read,
+	#inline-read s
+	{
+		background-image: url(images/bg-status@2x.png);
 	}
 }

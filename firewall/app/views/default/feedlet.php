@@ -122,7 +122,7 @@ else
 	}
 	
 	// accomodate CHOCKLOCK
-	$html = r('/(<LINK |(HREF|REL|TYPE|TITLE)=)/e', "low('$1');", $html);
+	$html = preg_replace_callback('/(<LINK |(HREF|REL|TYPE|TITLE)=)/', 'callback_low', $html);
 	
 	if ($links = get_tags($html, 'link'))
 	{
@@ -185,7 +185,6 @@ else
 				);
 			}
 		}
-		// todo: sort subscribed feeds to top
 		
 		$total_feeds = count($feeds_by_title);
 

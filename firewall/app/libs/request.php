@@ -2,7 +2,7 @@
 /******************************************************************************
  added: https/SSL support
 		cookie support
- todo: add separate timeouts for request and dns
+ TODO: add separate timeouts for request and dns
        currently a request could take twice the timeout provided (dns + request)
        better error reporting
  ------------------------------------------------------------------------------

@@ -10,7 +10,6 @@
 	<h1>Installation</h1>
 	<h2>Quick Question</h2>
 	
-	<!-- todo: verbosify -->
 	<p>An existing Fever installation was found on this database. How would you like to proceed?</p>
 	
 	<table>

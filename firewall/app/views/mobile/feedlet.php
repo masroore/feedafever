@@ -169,6 +169,14 @@ li.guess label.checkbox
 	width: 26px;
 	height: 26px;
 	background: url(firewall/app/views/mobile/styles/images/btn-options.png) 0 0 no-repeat;
+	background-size: 26px 26px;
+}
+
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+	#feedlet .options-btn
+	{
+		background-image: url(firewall/app/views/mobile/styles/images/btn-options@2x.png);
+	}
 }
 
 #feed-options-template,
@@ -342,7 +350,7 @@ Fever.Feedlet =
 	
 	onOrientationChange : function()
 	{
-		document.body.className = (window.innerWidth == 320) ? 'portrait' : 'landscape';
+		Fever.iPhone.detectPortrait();
 	},
 	onload : function()
 	{

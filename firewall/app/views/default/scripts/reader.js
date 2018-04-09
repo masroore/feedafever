@@ -49,7 +49,6 @@ Fever.Reader =
 		var toPHP = function(str) { return str.replace(/([A-Z])/, '_$1').toLowerCase(); };
 		var url	= './?xhr';
 		
-		var gentle = true;
 		if (arguments.length)
 		{
 			var ui	= arguments[0].split(/\s+/);
@@ -58,22 +57,19 @@ Fever.Reader =
 				var prop = ui[i];
 				url += '&ui[' + toPHP(prop) + ']=' + this.ui[prop];
 			};
-			gentle = false;
 		};
 		
 		this.onContentRequested();
-		XHR.get(url, [one('#RAM'), one('#groups'), one('#feeds-scroller'), one('#feeds-alpha'), one(gentle?'#null':'#content-container')], {
+		XHR.get(url, [one('#RAM'), one('#groups'), one('#feeds-scroller'), one('#feeds-alpha'), one('#content-container')], {
 			beforeInsert 	: function(data)
 			{
 				Fever.Reader.autoReadEnabled = false;
 			},
 			afterInsert		: function(data)
 			{
-				// if (gentle) return;
-				
 				Fever.Reader.onContentInserted();
 				// give the browser a moment to load the updated values from "RAM"
-				// todo: is this separation and delay really necessary?
+				// TODO: is this separation and delay really necessary?
 				window.setTimeout(function(){ Fever.Reader.onContentLoaded(); }, 50);
 			}
 		});
@@ -286,7 +282,7 @@ Fever.Reader =
 	
 	padContent : function()
 	{
-		// todo: wrap head around asynchronous state changes
+		// TODO: wrap head around asynchronous state changes
 		var itemOrLink = last('#content-container div.item, #content-container div.link');
 		if (this.pageMaxed)
 		{
@@ -983,7 +979,7 @@ Fever.Reader =
 					var nextDegree = nextSibling(itemOrLink.parentNode);
 					if (nextDegree)
 					{
-						// todo: relies on markup source order, okay for now
+						// TODO: relies on markup source order, okay for now
 						itemOrLink = nextDegree.getElementsByTagName('div')[2];
 					};
 				};
@@ -1030,7 +1026,7 @@ Fever.Reader =
 						newY = minY + 16;
 
 						// if itemOrLink is onscreen
-						// todo: still not perfect but close enough for now
+						// TODO: still not perfect but close enough for now
 						var b = y + itemOrLink.offsetHeight + 16;
 						if (y < window.pageYOffset && b > window.pageYOffset)
 						{
@@ -1930,7 +1926,7 @@ Fever.Reader =
 						{
 							if (left || noFeeds) // left
 							{
-								// first *visible* item/link // todo: is a dupe
+								// first *visible* item/link // TODO: is a dupe
 								var itemsOrLinks = $('#content-container div.item, #content-container div.link');
 								for (var i = 0; i < itemsOrLinks.length; i++)
 								{
@@ -1955,7 +1951,7 @@ Fever.Reader =
 							}
 							else
 							{
-								// first *visible* item/link // todo: is a dupe
+								// first *visible* item/link // TODO: is a dupe
 								var itemsOrLinks = $('#content-container div.item, #content-container div.link');
 								for (var i = 0; i < itemsOrLinks.length; i++)
 								{
@@ -2184,7 +2180,7 @@ Fever.Reader =
 };
 Fever.menuControllers =
 {
-	// todo: eliminate redundancy
+	// TODO: eliminate redundancy
 	hotStart :
 	{
 		items : [],
@@ -2310,7 +2306,7 @@ Fever.menuControllers =
 			var allRead		= one('a.feed-' + feedId).className.match(/\bread\b/) || Fever.Reader.ui.section == 2;
 			var divider		= { divider : true };
 			
-			// todo: for saved section, sparks superfeed
+			// TODO: for saved section, sparks superfeed
 			
 			var read = 
 			{

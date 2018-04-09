@@ -7,7 +7,7 @@ define('VALID_EMAIL', 		'!^([^\x00-\x20\x22\x28\x29\x2c\x2e\x3a-\x3c\x3e\x40\x5b
 class Fever
 {
 	var $app_name	= 'Fever';
-	var $version 	= 129;
+	var $version 	= 139;
 	var $db			= array
 	(
 		'server' 	=> 'localhost',
@@ -17,6 +17,7 @@ class Fever
 		'prefix'	=> 'fever_',
 		'connected'	=> false
 	);
+	var $dbc		= null;
 	var $cfg		= array
 	(
 		'email'					=> '',
@@ -76,7 +77,7 @@ class Fever
 		'mobile_read_on_back_out'	=> true,
 		'mobile_view_in_app'		=> true,
 		
-		'auto_reload'		=> true, // reload after refresh
+		'auto_reload'		=> false, // reload after refresh
 		'auto_refresh'		=> 1, // iframe (0:cron)
 		'auto_update'		=> 1,
 		'toggle_click'		=> 1,
@@ -321,7 +322,6 @@ class Fever
 	 **************************************************************************/
 	function Fever()
 	{
-		debug(array('GET'=>$_GET,'POST'=>$_POST), 'New instance of Fever');
 		$_GET 	= array_strip_slashes($_GET);
 		$_POST 	= array_strip_slashes($_POST);
 		
@@ -349,6 +349,35 @@ class Fever
 			strpos($_SERVER['HTTP_USER_AGENT'], 'AppleWebKit') && 
 			m('#(iPad)#', $_SERVER['HTTP_USER_AGENT'], $m)
 		);
+		
+		// allow forcing mobile
+		if (isset($_GET['mobile'])) {
+			$this->is_ipad = false;
+			$this->is_mobile = true;
+		}
+		
+		if (err()) debug(array('GET'=>$_GET,'POST'=>$_POST, 'capabilities'=>$this->capabilities()), 'New instance of Fever');
+	}
+	
+	/**************************************************************************
+	 capabilities()
+	 **************************************************************************/
+	function capabilities()
+	{
+		$caps = array();
+		$caps['fever_version']			= version_clean($this->formatted_version());
+		$caps['php_version'] 			= version_clean(phpversion());
+		$caps['mysql_client_version'] 	= version_clean($this->dbc->client_version());
+		$caps['mysql_server_version'] 	= version_clean($this->dbc->server_version());
+		$caps['has_pdo_mysql']			= extension_loaded('pdo_mysql')?1:0; 			// SIDB API, prefered
+		$caps['has_mysqli']				= extension_loaded('mysqli')?1:0;				// SIDB API, fallback
+		$caps['has_mysql']				= function_exists('mysql_connect')?1:0;			// SIDB API, last resort
+		$caps['has_iconv']				= function_exists('iconv')?1:0; 				// OMDOMDOM encoding, prefered
+		$caps['has_mbstring']			= function_exists('mb_convert_encoding')?1:0; 	// OMDOMDOM encoding, fallback
+		$caps['has_gd_png']				= has_gd_png()?1:0;								// favicon caching
+		$caps['has_curl']				= in(get_loaded_extensions(), 'curl')?1:0;		// request
+		if ($caps['has_curl'] && in(ini_get('disable_functions'), 'curl_')) $caps['has_curl'] = 0;
+		return $caps;
 	}
 	
 	/**************************************************************************
@@ -453,33 +482,16 @@ class Fever
 	/**************************************************************************
 	 connect()
 	
-	 todo: rephrase recognized MySQL errors into helpful human-readable errors
+	 TODO: rephrase recognized MySQL errors into helpful human-readable errors
 	 **************************************************************************/
 	function connect()
 	{
-		$connected = false;
-		if (@mysql_connect($this->db['server'], $this->db['username'], $this->db['password']))
-		{
-			if (@mysql_select_db($this->db['database']))
-			{
-				$connected = true;
-			}
-			else
-			{
-				$this->fatal_error('MySQL Error: '.mysql_error().'. ('.mysql_errno().')');
-			}
-		}
-		else
-		{
-			$this->fatal_error('MySQL Error: '.mysql_error().'. ('.mysql_errno().')');
-		}
+		$this->dbc = SIDB($this->db['database'], $this->db['username'], $this->db['password'], $this->db['server']); //, SIDB_API_MYSQL);
+		$connected = $this->dbc->is_connected;
 
-		if (!$connected)
-		{
-			$this->annotate_error('Fever was unable to connect to the database.');
-		}
-		
-		
+		if ($this->dbc->error) $this->fatal_error($this->dbc->error);
+		if (!$connected) $this->annotate_error('<p>Fever was unable to connect to the database.</p>');
+
 		$this->db['connected'] = $connected;
 		return $connected;
 	}
@@ -493,20 +505,30 @@ class Fever
 	}
 	
 	/**************************************************************************
+	 is_connected()
+	 **************************************************************************/
+	function close()
+	{
+		$this->dbc->close();
+		exit();
+	}
+	
+	/**************************************************************************
 	 query()
 	 **************************************************************************/
 	function query($query)
 	{
 		$before = ms();
-		if (!($result = mysql_query($query)))
-		{
-			$error = 'MySQL Error: '.mysql_error().'. ('.mysql_errno().')<br />Query: '.$query;
+		$error  = false;
+		if (!$this->dbc->query($query)) {
+			$error = $this->dbc->error;
 			$this->error($error);
 			debug($error);
 		}
 		$duration = number_format(ms() - $before, 4);
 		debug($query, $duration.'s');
-		return $result;
+		
+		return !$error;
 	}
 	
 	/**************************************************************************
@@ -515,7 +537,7 @@ class Fever
 	function insert($query)
 	{
 		$this->query($query);
-		return mysql_insert_id();
+		return $this->dbc->insert_id();
 	}
 	
 	/**************************************************************************
@@ -581,20 +603,14 @@ class Fever
 
 	 Selects a single record using the provided query.
 	 ******************************************************************************/
-	function query_one($query, $type = MYSQL_ASSOC)
+	function query_one($query)
 	{
 		$query = "{$query} LIMIT 1";
-
-		if ($result = $this->query($query))
-		{
-			if ($row = mysql_fetch_array($result, $type))
-			{
-				foreach ($row as $key => $value)
-				{
-					$row[$key] = strip_slashes($value);
-				}
-				mysql_free_result($result);
-				return $row;
+		
+		if ($this->query($query)) {
+			$rows = $this->dbc->rows();
+			if ($rows) {
+				return $rows[0];
 			}
 		}
 		return false;
@@ -605,23 +621,15 @@ class Fever
 
 	 Selects all records using the provided query. 
 	 ******************************************************************************/
-	function query_all($query, $type = MYSQL_ASSOC)
+	function query_all($query)
 	{
 		$return = array();
-
-		if ($result = $this->query($query))
-		{
-			while ($row = mysql_fetch_array($result, $type))
-			{
-				foreach ($row as $key => $value)
-				{
-					$row[$key] = strip_slashes($value);
-				}
-				$return[] = $row;
+		if ($this->query($query)) {
+			$rows = $this->dbc->rows();
+			if ($rows) {
+				$return = $rows;
 			}
-			mysql_free_result($result);
 		}
-		// p($query, count($return).' items');
 		return $return;
 	}
 
@@ -633,22 +641,12 @@ class Fever
 	 ******************************************************************************/
 	function query_col($col, $query)
 	{
-		$query = "{$query} LIMIT 1";
-
-		if ($result = $this->query($query))
-		{
-			if ($row = mysql_fetch_assoc($result))
-			{
-				if (isset($row[$col]))
-				{
-					mysql_free_result($result);
-					return strip_slashes($row[$col]);
-				}
-				else
-				{
-					mysql_free_result($result);
-					$this->error("Column <code>{$col}</code> doesn't exist.<br />Query: {$query}");
-				}
+		if ($row = $this->query_one($query)) {
+			if (isset($row[$col])) {
+				return $row[$col];
+			}
+			else {
+				$this->error("Column <code>{$col}</code> doesn't exist.<br />Query: {$query}");
 			}
 		}
 		return false;
@@ -663,21 +661,16 @@ class Fever
 	function query_cols($col, $query)
 	{
 		$return = array();
-
-		if ($result = $this->query($query))
-		{
-			while ($row = mysql_fetch_assoc($result))
-			{
-				if (isset($row[$col]))
-				{
-					$return[] = strip_slashes($row[$col]);
+		if ($rows = $this->query_all($query)) {
+			foreach($rows as $row) {
+				if (isset($row[$col])) {
+					$return[] = $row[$col];
 				}
-				else
-				{
+				else {
 					$this->error("Column `{$col}` doesn't exist.<br />Query: {$query}");
+					break;
 				}
 			}
-			mysql_free_result($result);
 		}
 		return $return;
 	}
@@ -742,7 +735,7 @@ class Fever
 	 **************************************************************************/
 	function escape_sql($str = '')
 	{
-		return (!is_callable('mysql_real_escape_string')) ? mysql_escape_string($str) : mysql_real_escape_string($str);
+		return r("/(^'|'$)/", '', $this->dbc->quote($str));
 	}
 
 	/**************************************************************************
@@ -755,26 +748,14 @@ class Fever
 	 **************************************************************************/
 	function prepare_sql($query)
 	{
-		$args	= func_get_args();
-
-		if (count($args) > 1)
-		{
-			$query		= r('/\?/', '%s', array_shift($args));
-			foreach ($args as $key => $value)
-			{
-				$args[$key] = "'".$this->escape_sql($value)."'";
-			}
-			array_unshift($args, $query);
-			$query = call_user_func_array('sprintf', $args);
-		}
-
-		return $query;
+		$args = func_get_args();
+		return call_user_func_array(array($this->dbc, 'prepare'), $args);
 	}
 	
 	/**************************************************************************
 	 render()
 	
-	 todo: make sure resource exists
+	 TODO: make sure resource exists
 	 **************************************************************************/
 	function render($view_name = '', $string_output = false)
 	{
@@ -794,7 +775,7 @@ class Fever
 		$depth--;
 		if ($depth == 0)
 		{
-			exit();
+			$this->close();
 		}
 	}
 	
@@ -935,6 +916,11 @@ class Fever
 		{
 			$this->visit_feed_site($_GET['visit']);
 		}
+		
+		if (isset($_GET['feedlet']))
+		{
+			$this->route_feedlet();
+		}
 	
 		if ($this->cfg['updates']['last_updated_on_time'])
 		{
@@ -945,11 +931,6 @@ class Fever
 		update message delivered before this point
 		***********************************************************************/
 	
-		if (isset($_GET['feedlet']))
-		{
-			$this->route_feedlet();
-		}
-		
 		if (isset($_GET['extras']))
 		{
 			$this->route_extras();
@@ -1029,7 +1010,7 @@ class Fever
 				$this->error('You must check "Confirm uninstall" to uninstall Fever.');
 				$this->render('errors');
 			}	
-			exit();
+			$this->close();
 		}
 		
 		$this->render('uninstall');
@@ -1052,7 +1033,7 @@ class Fever
 				$this->error('You must check "Confirm empty" to empty Fever.');
 				$this->render('errors');
 			}	
-			exit();
+			$this->close();
 		}
 		
 		$this->render('empty');
@@ -1075,7 +1056,7 @@ class Fever
 				$this->error('You must check "Confirm" to delete orphaned items and links from Fever.');
 				$this->render('errors');
 			}	
-			exit();
+			$this->close();
 		}
 		
 		$this->render('unorphan');
@@ -1098,7 +1079,7 @@ class Fever
 				$this->error('You must check "Confirm flush" to flush Fever.');
 				$this->render('errors');
 			}	
-			exit();
+			$this->close();
 		}
 		
 		$this->render('flush');
@@ -1165,7 +1146,7 @@ class Fever
 		if ($this->is_mobile)
 		{
 			$this->render('manifest');
-			exit();
+			$this->close();
 		}
 	}
 	
@@ -1519,7 +1500,7 @@ class Fever
 				e(array_to_json($data));
 			break;
 		}
-		exit();
+		$this->close();
 	}
 	
 	/**************************************************************************
@@ -1555,7 +1536,7 @@ class Fever
 			{
 				header('Content-type:text/javascript');
 				$this->render('feedlet/login');
-				exit();
+				$this->close();
 			}
 			$this->render('login');
 		}
@@ -1577,7 +1558,7 @@ class Fever
 		)
 		{
 			header("{$_SERVER['SERVER_PROTOCOL']} 304 Not Modified"); 
-			exit();
+			$this->close();
 		}
 
 		header('Content-type: text/css');
@@ -1585,7 +1566,6 @@ class Fever
 		// good idea, no effect on Safari
 		header('Expires: '.gmdate('D, d M Y H:i:s', time() + (5 * 365 * 24 * 60 * 60)).' GMT');
 		
-		// todo: detect when this is necessary
 		if (extension_loaded('zlib')) { ob_start('ob_gzhandler'); }
 		
 		$favicons = $this->get_all('favicons', '1 ORDER BY `id` ASC');
@@ -1596,7 +1576,7 @@ class Fever
 			$css .= nl("i.f{$favicon['id']} i{background-image:url(data:{$favicon['cache']});}");
 		}
 		e($css);
-		exit();
+		$this->close();
 	}
 	
 	/**************************************************************************
@@ -1617,7 +1597,7 @@ class Fever
 					case 'content-type':
 						if (!m('#^image/.+$#i', $value, $m))
 						{
-							exit();
+							$this->close();
 						}
 					case 'content-length':
 						header($header.':'.$value);
@@ -1626,7 +1606,7 @@ class Fever
 			}
 			e($response['body']);	
 		}
-		exit();
+		$this->close();
 	}
 	
 	/**************************************************************************
@@ -1688,7 +1668,7 @@ class Fever
 				case 'export':
 					$group_ids 	= ($_POST['with_groups']) ? $_POST['group_ids'] : array();
 					$this->export($group_ids, isset($_POST['flatten']), isset($_POST['include_sparks']));
-					exit();
+					$this->close();
 				break;
 				
 				case 'auth':
@@ -1773,7 +1753,7 @@ class Fever
 				case 'clear-search':
 					$this->prefs['ui']['search'] = '';
 					$this->save();
-					exit();
+					$this->close();
 				break;
 			
 				case 'statuses':
@@ -1786,7 +1766,7 @@ class Fever
 							$this->{$method_name}($_GET['id'], $before);
 						}
 					}	
-					exit();
+					$this->close();
 				break;
 				
 				case 'add-feed-to-group':
@@ -1794,7 +1774,7 @@ class Fever
 					{
 						$this->add_feed_to_group($_GET['feed_id'], $_GET['group_id']);
 					}	
-					exit();
+					$this->close();
 				break;
 				
 				case 'remove-feed-from-group':
@@ -1802,12 +1782,12 @@ class Fever
 					{
 						$this->remove_feed_from_group($_GET['feed_id'], $_GET['group_id']);
 					}	
-					exit();
+					$this->close();
 				break;
 				
 				case 'unread-read':
 					$this->unread_recently_read();
-					exit();
+					$this->close();
 				break;
 			
 				case 'item':
@@ -1816,7 +1796,7 @@ class Fever
 					$item_allows 	= $this->option('item_allows', $this->prefs['ui']['feed_id']);
 					$description 	= $this->content($item['description'], isset($_GET['excerpt']), $item_allows, $feed['prevents_hotlinking']);
 					e($description);
-					exit();
+					$this->close();
 				break;
 			
 				default:
@@ -1873,7 +1853,7 @@ class Fever
 		{
 			header('Content-type:text/javascript');
 			$this->render('feedlet/bookmarklet');
-			exit();
+			$this->close();
 		}
 		else if (isset($_GET['url']))
 		{
@@ -2021,7 +2001,7 @@ class Fever
 		if (!empty($feed['site_url']))
 		{
 			header("Location:{$feed['site_url']}");
-			exit();
+			$this->close();
 		}
 	}
 	
@@ -2121,7 +2101,7 @@ PHP;
 		if ($has_error)
 		{
 			$this->render('errors');
-			exit();
+			$this->close();
 		}
 		else
 		{
@@ -2146,7 +2126,7 @@ PHP;
 		
 		$this->prefs['use_celsius']		= $_POST['use_celsius'] ? true : false;
 		
-		$mysqlVersion = mysql_get_client_info();
+		$mysqlVersion = $this->dbc->client_version();
 		$mysqlVersion = preg_replace('#(^\D*)([0-9.]+).*$#', '\2', $mysqlVersion); // strip extra-version cruft
 		$engine_type = ($mysqlVersion > 4) ? 'ENGINE' : 'TYPE';
 		
@@ -2200,7 +2180,7 @@ PHP;
 	function is_development_copy()
 	{
 		$paths = $this->install_paths();
-		return ($paths['trim'] == 'localhost') ? true : false;
+		return ($paths['trim'] == 'localhost' || $paths['trim'] == 'scratch.dev') ? true : false;
 	}
 	
 	/**************************************************************************
@@ -2340,18 +2320,29 @@ PHP;
 		)
 		{
 			$paths		= $this->install_paths();
-			$response 	= $this->gateway_request('Update');
-			if (!isset($response['headers']['X-Apptivator-Verified']))
+			
+			global $REQUEST_TIMEOUT;
+			$old_timeout 		= $REQUEST_TIMEOUT;
+			$REQUEST_TIMEOUT 	= 20; // longer because of retina images
+			$response 			= $this->gateway_request('Update');
+			$REQUEST_TIMEOUT 	= $old_timeout;
+			
+			if (!empty($response['error']['msg'])) {
+				$this->error($response['error']['type'].' Error ('.$response['error']['no'].'): '.$response['error']['msg']);
+				$this->render('errors');
+				$this->close();
+			}
+			else if (!isset($response['headers']['X-Apptivator-Verified']))
 			{
 				$this->error('Invalid response headers from the gateway ('.prevent_xss(array_to_query($response['headers'])).')');
 				$this->render('errors');
-				exit();
+				$this->close();
 			}
 			else if (!$response['headers']['X-Apptivator-Verified'])
 			{
 				$this->error('The Activation Key <strong>'.ACTIVATION_KEY.'</strong> is not valid for '.$this->app_name.' on: '.$paths['trim']);
 				$this->render('errors');
-				exit();
+				$this->close();
 			}
 
 			$zip_name = 'data';
@@ -2425,7 +2416,8 @@ PHP;
 		(
 			'app_name'			=> low($this->app_name),
 			'activation_key' 	=> ACTIVATION_KEY,
-			'domain_name'		=> $paths['trim']
+			'domain_name'		=> $paths['trim'],
+			'capabilities'		=> $this->capabilities()
 		),
 		array('X-Apptivator-Action:'.$action));
 		return $response;
@@ -2436,6 +2428,9 @@ PHP;
 	 **************************************************************************/
 	function update()
 	{
+		// files have been updated
+		// update database or customize updated files
+		
 		$data = get_class_vars('Fever');
 		
 		if ($this->cfg['version'] < 32)
@@ -2494,7 +2489,7 @@ PHP;
 		{
 			// clean-up after repeated unsuccessful attempts to update to 1.04
 			$i = 2;
-			while (mysql_query("ALTER TABLE `{$this->db['prefix']}links` DROP INDEX `is_first_{$i}`") !== false)
+			while ($this->dbc->query("ALTER TABLE `{$this->db['prefix']}links` DROP INDEX `is_first_{$i}`") !== false)
 			{
 				// delete duplicate indexes until we get an error that the are no duplicate indexes
 				$i++;
@@ -2533,6 +2528,10 @@ PHP;
 			$this->query("ALTER TABLE `{$this->db['prefix']}feeds` CHANGE `site_url` `site_url` varchar(255) default NULL, CHANGE `last_refreshed_on_time` `last_refreshed_on_time` int(10) unsigned NOT NULL default '0', CHANGE `last_updated_on_time` `last_updated_on_time` int(10) unsigned NOT NULL default '0'");
 		}
 		
+		if ($this->cfg['version'] < 136) {
+			$this->gateway_request('Version'); // first capabilities report
+		}
+		
 		// save the update
 		$this->cfg['updates']['last_updated_on_time'] = time(); // added v038
 		$this->cfg['version'] = $this->version;
@@ -2545,7 +2544,7 @@ PHP;
 	function login()
 	{
 		$name 	= "{$this->db['prefix']}auth";
-		$value 	= md5("FEVER-$this->cfg['installed_on_time']-$this->cfg['password']");
+		$value 	= md5("FEVER-{$this->cfg['installed_on_time']}-{$this->cfg['password']}");
 		setcookie($name, $value, time() + (365 * 24 * 60 * 60));
 		$_COOKIE[$name] = $value;
 	}
@@ -2556,7 +2555,7 @@ PHP;
 	function is_logged_in()
 	{
 		$name 	= "{$this->db['prefix']}auth";
-		$value 	= md5("FEVER-$this->cfg['installed_on_time']-$this->cfg['password']");
+		$value 	= md5("FEVER-{$this->cfg['installed_on_time']}-{$this->cfg['password']}");
 		return (isset($_COOKIE[$name]) && $_COOKIE[$name] == $value); 
 	}
 	
@@ -3070,7 +3069,7 @@ PHP;
 		{
 			debug($existing['url'], 'Feed already exists');
 			$feed_id = $existing['id'];
-			// todo: update existing to allow for multiple groups on import and sparking
+			// TODO: update existing to allow for multiple groups on import and sparking
 		}
 		else
 		{
@@ -3278,7 +3277,7 @@ PHP;
 				// execute each_method
 				if (method_exists($this, $each_method))
 				{
-					call_user_func_array(array(&$this, $each_method), array($obj, $i, $total));
+					call_user_func_array(array($this, $each_method), array($obj, $i, $total));
 					
 					if (!$this->is_silent)
 					{
@@ -3301,14 +3300,14 @@ PHP;
 				{
 					e('<meta http-equiv="refresh" content="0;url='.$refresh_url.'" />');
 				}
-				exit();
+				$this->close();
 			}
 		}
 		
 		if (method_exists($this, $complete_method))
 		{
 			$this->{$complete_method}();
-			exit();
+			$this->close();
 		}
 	}
 
@@ -3322,6 +3321,8 @@ PHP;
 		
 		// repair crashed tables once an hour
 		$do_repair	= ($this->cfg['last_repair_on_time'] < time() - (60 * 60));
+
+		// $do_optimize = $do_repair = true; // TODO: comment out for release
 		
 		// Update configs accordingly
 		if ($do_optimize)	{ $this->cfg['last_optimize_on_time'] = time(); }
@@ -3331,7 +3332,7 @@ PHP;
 		{
 			$this->save();
 
-			$tables = array('items', 'links');
+			$tables = array('items', 'links', 'feeds');
 			foreach($tables as $table)
 			{
 				if ($do_optimize) 
@@ -3340,14 +3341,11 @@ PHP;
 				}
 
 				if ($do_repair)
-				{
+				{	
 					// Reduced optimized statements should prevent crashes but just to be sure
-					$query = "CHECK TABLE {$this->db['prefix']}{$table} FAST";
-					if ($result = $this->query($query)) 
-					{
-						mysql_data_seek($result,mysql_num_rows($result)-1);
-						$status = mysql_fetch_assoc($result);
-
+					if ($rows = $this->query_all("CHECK TABLE {$this->db['prefix']}{$table} FAST")) {
+						// debug(ptab($rows, 'CHECK', false));
+						$status = end($rows);
 						if ($status['Msg_type']=='error') { $this->query("REPAIR TABLE {$this->db['prefix']}{$table}"); }
 					}
 				}
@@ -3390,8 +3388,6 @@ PHP;
 		$stale = time() - $this->prefs['refresh_interval'] * 60;
 		$feeds = $this->get_all('feeds', "{$where} AND `last_refreshed_on_time` < {$stale} ORDER BY `is_spark` ASC, `last_refreshed_on_time` ASC");
 		
-		// do we need to make suare $feeds isn't empty first?
-		
 		$this->infiniterator($feeds, 'refresh_each', 'refresh_complete', $args);
 	}
 	
@@ -3416,7 +3412,7 @@ PHP;
 		$action	= ($favicon) ? 'cache' : 'refresh';
 		$this->{$action.'_each'}($feed);
 		$this->{$action.'_complete'}();
-		exit();
+		$this->close();
 	}
 	
 	/**************************************************************************
@@ -3426,7 +3422,7 @@ PHP;
 	{
 		if (!$this->is_silent)
 		{
-			// todo: this is html/script related, get it out of here
+			// TODO: this is html/script related, get it out of here
 			$class = 'f'.$feed['favicon_id'];
 			if ($feed['favicon_id'] <= 1)
 			{
@@ -3483,6 +3479,8 @@ HTML;
 	 **************************************************************************/
 	function refresh_feed($feed_or_id)
 	{
+		$force_complete_refresh = err();
+		
 		if (is_array($feed_or_id))
 		{
 			$feed = $feed_or_id;
@@ -3497,19 +3495,20 @@ HTML;
 		$expires_on_time = $now - ($this->prefs['item_expiration'] * 7 * 24 * 60 * 60); // item_expiration is integer weeks
 		$this->query($this->prepare_sql("DELETE FROM `{$this->db['prefix']}items` WHERE `feed_id` = ? AND `created_on_time` < {$expires_on_time} AND `is_saved` = 0", $feed['id']));
 		$this->query($this->prepare_sql("DELETE FROM `{$this->db['prefix']}links` WHERE `feed_id` = ? AND `created_on_time` < {$expires_on_time}", $feed['id']));
-		$reweight = (mysql_affected_rows() > 0);
+		$reweight = ($this->dbc->affected_rows() > 0);
 		
 		if ($this->get_count('links', $this->prepare_sql("`feed_id` = ? AND `is_first` = 1", $feed['id'])) == 0)
 		{
 			$reweight = true;
 		}
+		if ($force_complete_refresh) $reweight = true;
 		
 		// need to update the refresh time whether our request is successful or not
 		// unless another refresh thread beat us to the punch
 		// eg. user refreshes in the browser during a scheduled cron refresh
 		$this->query($this->prepare_sql("UPDATE `{$this->db['prefix']}feeds` SET `last_refreshed_on_time` = ? WHERE `id` = ? AND `last_refreshed_on_time` <= ?", $now, $feed['id'], $feed['last_refreshed_on_time']));
 		$feed['last_refreshed_on_time'] = $now;
-		if (!mysql_affected_rows()) { return; }
+		if ($this->dbc->affected_rows()<1) { return; }
 		
 		// protected feeds
 		$headers = array();
@@ -3603,7 +3602,7 @@ HTML;
 					
 					// debug('LINK has_href:'.($has_href?'Y':'N').' has_rel:'.($has_rel?'Y':'N').' href:'.$link->get_attr('href').' rel:'.$link->get_attr('rel'));
 					
-					if ($has_href && (!$has_rel || ($has_rel && $rel != 'self' && $rel != 'license' && !m('#^http#', $rel, $r))))
+					if ($has_href && (!$has_rel || ($has_rel && $rel != 'self' && $rel != 'hub' && $rel != 'license' && !m('#^http#', $rel, $r))))
 					// if ($has_href && $has_rel && $rel != 'self' && $rel != 'license')
 					{
 						$site_url = $href;
@@ -3716,6 +3715,13 @@ HTML;
 					$new_item['id']	= $existing['id'];
 					$item_id 		= $existing['id'];
 				}
+				
+				if ($force_complete_refresh) {
+					$feed_updated	= true;
+					$item_updated 	= true;
+					$new_item['id']	= $existing['id'];
+					$item_id 		= $existing['id'];
+				}
 			}
 			else // create
 			{
@@ -3766,6 +3772,7 @@ HTML;
 				}
 				
 				$links = $this->parse_links($new_item, $feed);
+				// debug($links, 'links');
 				
 				foreach($links as $link)
 				{
@@ -3830,7 +3837,7 @@ HTML;
 	{
 		if (!$this->is_silent)
 		{
-			// todo: this is html/script related, get it out of here
+			// TODO: this is html/script related, get it out of here
 			$title	= quote($this->title($feed));
 			$title_html = '<i class="favicon icon"><i></i></i>'.$title;
 			$html 	= <<<HTML
@@ -4063,6 +4070,7 @@ HTML;
 				case 'author':
 				case 'dc:creator':
 				case 'itunes:author':
+				case 'media:credit':
 					$author = '';
 					$node_child_nodes = $node->children();
 					if (count($node_child_nodes) > 1)
@@ -4121,7 +4129,7 @@ HTML;
 						}
 					}
 					
-					// todo: ignore author names that appear in the site url, implied
+					// TODO: ignore author names that appear in the site url, implied
 
 					$item['author'] = $author;
 				break;
@@ -4141,8 +4149,15 @@ HTML;
 
 					if (!empty($content))
 					{
+						$content = r('/<(\/?)html:/', '<$1', $content); // strips html: namespace prefix
 						$content = html_entity_decode_utf8_pre($content); // converts &quot; to " so the replacement below can do its thing
-						$content = r('#(src|href)\s*=\s*("|\')([^\2]+?)\2#mie', "stripslashes('$1=$2'.resolve('$site_url', trim('$3')).'$2')", $content);
+						// preg_replace with /e is depreated but anonymous functions were added in 5.5 and Fever supports back to 4.2.3
+						// $content = r('#(src|href)\s*=\s*("|\')([^\2]+?)\2#mie', "stripslashes('$1=$2'.resolve('$site_url', trim('$3')).'$2')", $content);
+						if (ma('#(src|href)\s*=\s*("|\')([^\2]+?)\2#mi', $content, $m)) {
+							foreach ($m[0] as $i=>$v) {
+								$content = sr($m[0][$i], stripslashes("{$m[1][$i]}={$m[2][$i]}".resolve($site_url, trim($m[3][$i]))."{$m[2][$i]}"), $content);
+							}
+						}
 						$item['description'] = $content;
 					}
 				break;
@@ -4239,6 +4254,8 @@ HTML;
 	 **************************************************************************/
 	function parse_links($item, $feed)
 	{
+		// debug($feed,'feed');
+		
 		$normalized_urls = array();
 		$links = array();
 		
@@ -4249,7 +4266,7 @@ HTML;
 		
 		// debug(array($feed['domain'], $link_domain));
 		
-		$is_local = ($feed['domain'] == $link_domain);
+		$is_local = ($feed['domain'] == $link_domain)?1:0;
 		
 		// there's duplicate logic here and below as well as in the route_blacklist
 		// method (although the regex is performed by MySQL up there)
@@ -4257,7 +4274,7 @@ HTML;
 		$blacklist_regexp = $this->build_blacklist_regexp();
 		if (!empty($this->prefs['blacklist']) && !empty($blacklist_regexp))
 		{
-			$is_blacklisted = m('#'.$blacklist_regexp.'#i', $url, $b);
+			$is_blacklisted = m('#'.$blacklist_regexp.'#i', $url, $b)?1:0;
 		}
 		
 		$link 	= array
@@ -4308,6 +4325,9 @@ HTML;
 		
 		if (ma('#<a[^>]+href\s*=\s*("|\')([^\\1]*)\\1[^>]*>(.*)</a>#siU', $item['description'], $m))
 		{
+			// debug($m[2],'found'); // expected match
+			// $debug = array();
+			
 			foreach($m[2] as $i => $url)
 			{
 				// filters out empty urls, anchors, mailtos, local logins, nowhere links and the above ignored
@@ -4315,21 +4335,23 @@ HTML;
 				{
 					continue;
 				}
-
+				
 				$title 			= trim(strip_tags_sane($m[3][$i]));
 				$url 			= resolve($feed['site_url'], true_url($url));
 				$normalized_url	= normalize_url($url);
 				$link_domain 	= r('#(/.*)$#', '', $normalized_url);
-				$is_local 		= ($feed['domain'] == $link_domain);
+				$is_local 		= ($feed['domain'] == $link_domain)?1:0;
 				$is_blacklisted = 0;
 				if (!empty($this->prefs['blacklist']) && !empty($blacklist_regexp))
 				{
-					$is_blacklisted = m('#'.$blacklist_regexp.'#i', $url, $b);
+					$is_blacklisted = m('#'.$blacklist_regexp.'#i', $url, $b)?1:0;
 				}
 				
 				// store all non-empty links
 				if (!empty($title))
 				{
+					// $debug[] = $url;
+			
 					$link = array
 					(
 						'feed_id'				=> $feed['id'],
@@ -4348,6 +4370,7 @@ HTML;
 					array_push($links, $link);
 				}
 			}
+			// debug(p($debug, 'survived', false));
 		}
 		return $links;
 	}
@@ -4400,6 +4423,9 @@ HTML;
 		$link_ids_by_weight		= array();
 		$link_ids_by_is_first	= array();
 		$links					= $this->get_all('links', $this->prepare_sql('`feed_id` = ? ORDER BY `created_on_time` ASC', $feed['id']));
+		
+		// debug(ptab($links, 'links', false));
+		
 		foreach($links as $link)
 		{
 			$checksum 		= $link['url_checksum'];
@@ -4408,8 +4434,8 @@ HTML;
 			if (!isset($link_weights[$checksum]))
 			{
 				// drop the weight for local non-items and useless obfuscated feedburner links
-				$is_feedburner 		= m('#^https?://feeds.feedburner.com#i', $link['url'], $m);
-				$is_local_nonitem 	= ($link['is_local'] && !$link['is_item']);
+				$is_feedburner 		= m('#^https?://feeds.feedburner.com#i', $link['url'], $m)?1:0;
+				$is_local_nonitem 	= ($link['is_local'] && !$link['is_item'])?1:0;
 				$link['weight'] 	= ($is_local_nonitem || $is_feedburner) ? 1 : 0;
 				$link['is_first'] 	= 1;
 			}
@@ -4711,7 +4737,13 @@ HTML;
 			
 			if ($prevents_hotlinking)
 			{
-				$content = r('#(img[^>]+)src\s*=\s*("|\')([^\2]+?)\2#ie', "stripslashes('$1src=$2./?img='.query_encode('$3').'$2')", $content);
+				// preg_replace with /e is depreated but anonymous functions were added in 5.5 and Fever supports back to 4.2.3
+				// $content = r('#(img[^>]+)src\s*=\s*("|\')([^\2]+?)\2#ie', "stripslashes('$1src=$2./?img='.query_encode('$3').'$2')", $content);
+				if (ma('#(img[^>]+)src\s*=\s*("|\')([^\2]+?)\2#i', $content, $m)) {
+					foreach ($m[0] as $i=>$v) {
+						$content = sr($m[0][$i], stripslashes("{$m[1][$i]}src={$m[2][$i]}./?img=".query_encode($m[3][$i])."{$m[2][$i]}"), $content);
+					}
+				}
 			}
 			
 			// hide images that don't load (eg. ads that are tied to a specific domain)
@@ -4812,6 +4844,24 @@ HTML;
 		}
 
 		return $class;
+	}
+	
+	/**************************************************************************
+	 override_link()
+	 **************************************************************************/
+	function override_link() {
+		
+		$file = 'override';
+		if ($this->is_mobile) $file .= '-mobile';
+		$file .= '.css';
+		
+		$link = '';
+		if (file_exists($file))
+		{
+			$link = '<link rel="stylesheet" type="text/css" href="'.$file.'" />';
+		}
+		
+		return $link;
 	}
 	
 	/**************************************************************************
@@ -4959,6 +5009,9 @@ HTML;
 			
 			$this->groups 	= $groups;
 			$this->feeds	= $feeds;
+			
+			debug(count($this->groups), 'Total groups');
+			debug(count($this->feeds), 'Total feeds');
 			
 			$this->group_ids_by_feed_id = $groups_by_feed;
 			$this->feed_ids_by_group_id = $feeds_by_group;
@@ -5114,7 +5167,7 @@ HTML;
 	 build_links()
 	 **************************************************************************/
 	function build_links()
-	{
+	{	
 		$day		= 24 * 60 * 60;
 		$scale 		= 1.25;
 		$now		= time();
@@ -5135,6 +5188,8 @@ HTML;
 		// get weighted checksums
 		$url_checksums_by_weight = $this->query_all($select.$hot_where.$where.$group_by.$order_by.$limit);
 		
+		// ptab($url_checksums_by_weight, 'unfiltered');
+		
 		// isolate just the hot checksums
 		$url_checksums = array();
 		$hot_checksums = array(); // tmp array
@@ -5149,6 +5204,8 @@ HTML;
 		// filter our original array because we'll be looping through it later
 		$url_checksums_by_weight = $hot_checksums;
 		unset($hot_checksums);
+		
+		// ptab($url_checksums_by_weight, 'filtered');
 		
 		// cold
 		if (!count($url_checksums_by_weight))

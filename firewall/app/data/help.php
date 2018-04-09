@@ -147,7 +147,6 @@
 	</dd>
 </dl>
 
-<!-- todo: only serve this help pre-installation -->
 <?php if (!$this->is_installed()):?>
 <dl id="help-db-server">
 	<dt>Database Server</dt>

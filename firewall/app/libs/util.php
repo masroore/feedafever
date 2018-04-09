@@ -31,12 +31,42 @@ function e($str = '')
 /**************************************************************************
  p()
  **************************************************************************/
-function p($obj = null, $title = '')
+function p($obj = null, $title = '', $print=true)
 {
-	e('<pre>');
-	if (!empty($title)) { e("{$title}: "); }
-	print_r($obj);
-	e('</pre>'."\n");
+	$html = '';
+	if (!empty($title)) { $html .= "{$title}: "; }
+	$html .= print_r($obj, true);
+		
+	if ($print) e("<pre>$html</pre>\n");
+	return $html;
+}
+
+/**************************************************************************
+ ptab()
+
+ Prints a tab-separated table of an array of associative database rows
+ **************************************************************************/
+function ptab($rows, $label='', $print=true) {
+	$html = '';
+	
+	if (!empty($label)) {
+		$html .= $label.":\r";
+	}
+	
+	foreach ($rows[0] as $lab=>$value) {
+		$html .= $lab."\t";
+	}
+	$html .= "\r";
+	
+	foreach ($rows as $row) {
+		foreach ($row as $lab=>$value) {
+			$html .= $value."\t";
+		}
+		$html .= "\r";
+	}
+	
+	if ($print) p($html);
+	return $html;
 }
 
 /**************************************************************************
@@ -405,9 +435,12 @@ function onload($js)
 function encode_embedded_cdata($html)
 {
 	// p($html);
-	$html = r('#<!\[CDATA\[(.*?)]]>#smeu', "stripslashes(htmlentities('$1', ENT_COMPAT, 'UTF-8'))", $html);
+	$html = preg_replace_callback('#<!\[CDATA\[(.*?)]]>#smu', 'callback_stripslashes_htmlentities', $html);
 	// p($html);
 	return $html;
+}
+function callback_stripslashes_htmlentities($m) {
+	return stripslashes(htmlentities($m[1], ENT_COMPAT, 'UTF-8'));
 }
 
 /**************************************************************************
@@ -428,8 +461,8 @@ function get_safe_html_translation_table() {
 function html_entity_decode_utf8($str)
 {
 	static $translation_table;
-	$str = r('/&#x0*([0-9a-f]+);/ei', 'code2utf(hexdec("\\1"))', $str);
-	$str = r('/&#0*([0-9]+);/e', 'code2utf(\\1)', $str);
+	$str = preg_replace_callback('/&#x0*([0-9a-f]+);/i', 'callback_code2utf_hexdec', $str);
+	$str = preg_replace_callback('/&#0*([0-9]+);/', 'callback_code2utf', $str);
 	if (!isset($translation_table))
 	{
 		$translation_table = array();
@@ -439,6 +472,12 @@ function html_entity_decode_utf8($str)
 		}
 	}
 	return strtr($str, $translation_table);
+}
+function callback_code2utf_hexdec($m) {
+	return code2utf(hexdec($m[1]));
+}
+function callback_code2utf($m) {
+	return code2utf($m[1]);
 }
 
 /**************************************************************************
@@ -1043,12 +1082,15 @@ function rebuild_url($link, $protocol='http')
 function normalize_url($link)
 {
 	$link = r('#^(?:https?|feed)://(?:www\.)?([^.]+\.)#i', '\\1', $link); // removes protocol and generic www subdomain
-	$link = r('#(^[^/]+/)#e', "low('$1')", $link); // lowercases the domain name
+	$link = preg_replace_callback('#(^[^/]+/)#', "callback_low", $link); // lowercases the domain name
 	$link = r('#/index\.[a-z0-9]+#i', '', $link); // removes /index.php and ilk
 	$link = r('#/\?#', '?', $link); // removes directory slash before query
 	// $link = r('/#,*$/', '', $link); // removes trailing anchor, which /index.php replacement was mistakenly doing
 	$link = r('#/$#', '', $link); // removes final directory slash
 	return $link;
+}
+function callback_low($m) {
+	return low($m[1]);
 }
 
 /**************************************************************************
@@ -1346,6 +1388,16 @@ function serialize_safe($data = null)
 function unserialize_safe($base64_data = '')
 {
 	return unserialize(base64_decode($base64_data));
+}
+
+/**************************************************************************
+ version_clean()
+ 
+ Strips cruft from the end of version numbers
+ **************************************************************************/
+function version_clean($version)
+{
+	return r('/[-a-z].+$/i', '', $version);
 }
 
 /**************************************************************************

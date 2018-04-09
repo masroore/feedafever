@@ -222,7 +222,6 @@ var Fever =
 			var menuName		= this.menuArgs[1];
 			var menuController 	= this.menuControllers[menuName];
 
-			// todo: fade
 			css(container, 'display', 'none');
 
 			// reset positioning
@@ -289,7 +288,6 @@ var Fever =
 		{
 			document.removeEventListener('mousemove', Fever.dismissHelp, true);
 			
-			// todo: fade
 			css(one('#help-container'), 'display', 'none');
 		};
 	},
@@ -359,20 +357,23 @@ var Fever =
 		var select 	= one('#dialog select[multiple]');
 
 		// reset
-		select.size = 0;
-		css(select, 'height', 'auto');
-
-		var dp		= getPos(dialog);
-		var sp		= getPos(select);
-		var wh		= window.innerHeight;
-		var so		= sp.y-dp.y;
-		var bh		= dialog.offsetHeight - (so+select.offsetHeight);
-		var nh		= wh - (dp.y*2 + so + bh);
-		
-		select.size = select.options.length;
-		if (select.offsetHeight > nh)
+		if (dialog && select) 
 		{
-			css(select, 'height', nh+'px');
+			select.size = 0;
+			css(select, 'height', 'auto');
+
+			var dp		= getPos(dialog);
+			var sp		= getPos(select);
+			var wh		= window.innerHeight;
+			var so		= sp.y-dp.y;
+			var bh		= dialog.offsetHeight - (so+select.offsetHeight);
+			var nh		= wh - (dp.y*2 + so + bh);
+		
+			select.size = select.options.length;
+			if (select.offsetHeight > nh)
+			{
+				css(select, 'height', nh+'px');
+			};
 		};
 	},
 	armTabs : function()
