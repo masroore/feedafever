@@ -1,2 +1,3 @@
 <?php
+
 define('ACTIVATION_KEY', '1G954058K84310529');

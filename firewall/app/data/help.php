@@ -5,15 +5,14 @@
 		frequency and disposition of the linking feed,
 		then ordered by temperature using the normal 
 		body temperature of <?php
-		
-		$degrees = 98.6;
-		if ($this->prefs['use_celsius'])
-		{
-			$degrees = ($degrees - 32) * 5 / 9;
-		}
-		e($degrees);
-		
-		?>&deg; as a base.
+
+        $degrees = 98.6;
+        if ($this->prefs['use_celsius']) {
+            $degrees = ($degrees - 32) * 5 / 9;
+        }
+        e($degrees);
+
+        ?>&deg; as a base.
 	</dd>
 </dl>
 
