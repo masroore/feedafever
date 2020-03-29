@@ -6,6 +6,8 @@ if (isset($_GET['errors'])) {
     error_reporting(0);
 }
 
+include '.\vendor\autoload.php';
+
 define('FIREWALLED', true);
 define('FIREWALL_ROOT', 'firewall/');
 include FIREWALL_ROOT.'app/index.php';

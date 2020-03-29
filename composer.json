@@ -1,0 +1,6 @@
+{
+    "require": {
+        "chamilo/pclzip": "^2.8",
+        "simplepie/simplepie": "^1.5"
+    }
+}
