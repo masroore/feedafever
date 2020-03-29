@@ -2046,7 +2046,7 @@ PHP;
                 debug('Could not save zip file');
             }
 
-            #include FIREWALL_ROOT.'app/libs/pclzip/pclzip.lib.php';
+            //include FIREWALL_ROOT.'app/libs/pclzip/pclzip.lib.php';
             $archive = new PclZip($zip_path);
 
             $contents = $archive->listContent();
@@ -3767,7 +3767,7 @@ HTML;
     public function parse_date($date)
     {
         if (!isset($this->DateParser)) {
-            #include_once FIREWALL_ROOT.'app/libs/simplepie/simplepie-parse-date.php';
+            //include_once FIREWALL_ROOT.'app/libs/simplepie/simplepie-parse-date.php';
             $this->DateParser = SimplePie_Parse_Date::get();
         }
 

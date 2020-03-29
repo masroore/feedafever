@@ -105,7 +105,7 @@ class SIDB
                 $args[$key] = $this->quote($value);
             }
             array_unshift($args, $sql);
-            $sql = call_user_func_array('sprintf', $args);
+            $sql = sprintf(...$args);
         }
 
         return $sql;
@@ -113,9 +113,9 @@ class SIDB
 
     public function strip_slashes($str)
     { // :string
-        if (get_magic_quotes_gpc()) {
+        #if (get_magic_quotes_gpc()) {
             $str = stripslashes($str);
-        }
+        #}
 
         return $str;
     }

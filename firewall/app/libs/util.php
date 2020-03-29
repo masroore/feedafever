@@ -26,7 +26,7 @@ function e(string $str = '')
 }
 
 // p()
-function p($obj = null, string $title = '', bool $print = true): string
+function p($obj = null, $title = '', bool $print = true): string
 {
     $html = '';
     if (!empty($title)) {
@@ -211,11 +211,11 @@ function checksum($value): string
  * @param string $str
  * @return string
  */
-function strip_slashes(string $str): string
+function strip_slashes($str): string
 {
-    if (get_magic_quotes_gpc()) {
+    #if (get_magic_quotes_gpc()) {
         $str = stripslashes($str);
-    }
+    #}
 
     return $str;
 }
@@ -230,11 +230,11 @@ function strip_slashes(string $str): string
  */
 function array_strip_slashes(array $array): array
 {
-    if (get_magic_quotes_gpc()) {
+    #if (get_magic_quotes_gpc()) {
         foreach ($array as $key => $value) {
             $array[$key] = (is_array($value)) ? array_strip_slashes($value) : stripslashes($value);
         }
-    }
+    #}
 
     return $array;
 }
@@ -246,9 +246,9 @@ function array_strip_slashes(array $array): array
  *****************************************************************************
  * @param array $array
  * @param array $nested
- * @return array
+ * @return string
  */
-function array_to_query(array $array = [], array $nested = []): array
+function array_to_query(array $array = [], array $nested = []): string
 {
     $tmpArray = [];
     foreach ($array as $key => $value) {
@@ -1169,7 +1169,7 @@ function memory_event(string $event_name = '')
 function memory_report(): string
 {
     if (!err()) {
-        return;
+        return null;
     }
 
     global $__MEMORY_EVENTS;
@@ -1337,7 +1337,7 @@ function serialize_safe($data = null): string
  *
  * Returns a PHP object from a base64-encoded, serialized string.
  **************************************************************************/
-function unserialize_safe(string $base64_data = ''): string
+function unserialize_safe(string $base64_data = '')
 {
     return unserialize(base64_decode($base64_data));
 }
